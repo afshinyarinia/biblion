@@ -1,66 +1,219 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# BIBLION - Book Management API
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+BIBLION is a RESTful API for managing books and bookshelves. It allows users to create and manage their book collections, organize books into shelves, and share their reading lists with others.
 
-## About Laravel
+## Features
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- User authentication using Laravel Sanctum
+- Book management (CRUD operations)
+- Bookshelf management
+- Public and private bookshelves
+- Search functionality for books
+- Soft deletes for data integrity
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Requirements
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- PHP 8.1 or higher
+- Composer
+- MySQL 5.7 or higher
+- Laravel 11.0
 
-## Learning Laravel
+## Installation
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+1. Clone the repository:
+```bash
+git clone https://github.com/yourusername/biblion.git
+cd biblion
+```
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+2. Install dependencies:
+```bash
+composer install
+```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+3. Create environment file:
+```bash
+cp .env.example .env
+```
 
-## Laravel Sponsors
+4. Configure your database in `.env`:
+```
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=biblion
+DB_USERNAME=your_username
+DB_PASSWORD=your_password
+```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+5. Generate application key:
+```bash
+php artisan key:generate
+```
 
-### Premium Partners
+6. Run migrations and seed the database:
+```bash
+php artisan migrate --seed
+```
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+## API Documentation
 
-## Contributing
+### Authentication Endpoints
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+#### Register a new user
+```
+POST /api/v1/register
+{
+    "name": "string",
+    "email": "string",
+    "password": "string",
+    "password_confirmation": "string"
+}
+```
 
-## Code of Conduct
+#### Login
+```
+POST /api/v1/login
+{
+    "email": "string",
+    "password": "string"
+}
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+#### Logout
+```
+POST /api/v1/logout
+Header: Authorization: Bearer {token}
+```
 
-## Security Vulnerabilities
+### Book Endpoints
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+#### List all books
+```
+GET /api/v1/books
+Optional Query Parameters:
+- search: Search term for title, author, or ISBN
+- page: Page number for pagination
+```
+
+#### Get a specific book
+```
+GET /api/v1/books/{id}
+```
+
+#### Create a new book
+```
+POST /api/v1/books
+Header: Authorization: Bearer {token}
+{
+    "title": "string",
+    "author": "string",
+    "isbn": "string",
+    "description": "string",
+    "publication_year": integer,
+    "publisher": "string",
+    "language": "string",
+    "page_count": integer,
+    "cover_image": "string"
+}
+```
+
+#### Update a book
+```
+PUT /api/v1/books/{id}
+Header: Authorization: Bearer {token}
+{
+    "title": "string",
+    "author": "string",
+    ...
+}
+```
+
+#### Delete a book
+```
+DELETE /api/v1/books/{id}
+Header: Authorization: Bearer {token}
+```
+
+### Shelf Endpoints
+
+#### List user's shelves
+```
+GET /api/v1/shelves
+Header: Authorization: Bearer {token}
+```
+
+#### Create a new shelf
+```
+POST /api/v1/shelves
+Header: Authorization: Bearer {token}
+{
+    "name": "string",
+    "description": "string",
+    "is_public": boolean
+}
+```
+
+#### Get a specific shelf
+```
+GET /api/v1/shelves/{id}
+Header: Authorization: Bearer {token}
+```
+
+#### Update a shelf
+```
+PUT /api/v1/shelves/{id}
+Header: Authorization: Bearer {token}
+{
+    "name": "string",
+    "description": "string",
+    "is_public": boolean
+}
+```
+
+#### Delete a shelf
+```
+DELETE /api/v1/shelves/{id}
+Header: Authorization: Bearer {token}
+```
+
+#### Add a book to a shelf
+```
+POST /api/v1/shelves/{shelf_id}/books
+Header: Authorization: Bearer {token}
+{
+    "book_id": integer
+}
+```
+
+#### Remove a book from a shelf
+```
+DELETE /api/v1/shelves/{shelf_id}/books/{book_id}
+Header: Authorization: Bearer {token}
+```
+
+## Testing
+
+Run the test suite:
+```bash
+php artisan test
+```
+
+## Development Setup
+
+For local development:
+```bash
+php artisan serve
+```
+
+The API will be available at `http://localhost:8000/api/v1/`
+
+## Test User
+
+After seeding the database, you can use these credentials to test the API:
+- Email: test@example.com
+- Password: password
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+This project is open-sourced software licensed under the MIT license.
