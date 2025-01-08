@@ -5,12 +5,13 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\V1\Shelf\AddBookRequest;
+use App\Http\Requests\Api\V1\Shelf\StoreShelfRequest;
+use App\Http\Requests\Api\V1\Shelf\UpdateShelfRequest;
 use App\Models\Book;
 use App\Models\Shelf;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Validator;
 
 final class ShelfController extends Controller
 {
@@ -30,19 +31,9 @@ final class ShelfController extends Controller
     /**
      * Store a newly created shelf.
      */
-    public function store(Request $request): JsonResponse
+    public function store(StoreShelfRequest $request): JsonResponse
     {
-        $validator = Validator::make($request->all(), [
-            'name' => ['required', 'string', 'max:255'],
-            'description' => ['nullable', 'string'],
-            'is_public' => ['boolean'],
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
-
-        $shelf = Auth::user()->shelves()->create($validator->validated());
+        $shelf = Auth::user()->shelves()->create($request->validated());
 
         return response()->json($shelf, 201);
     }
@@ -62,23 +53,9 @@ final class ShelfController extends Controller
     /**
      * Update the specified shelf.
      */
-    public function update(Request $request, Shelf $shelf): JsonResponse
+    public function update(UpdateShelfRequest $request, Shelf $shelf): JsonResponse
     {
-        if ($shelf->user_id !== Auth::id()) {
-            return response()->json(['message' => 'Unauthorized'], 403);
-        }
-
-        $validator = Validator::make($request->all(), [
-            'name' => ['sometimes', 'required', 'string', 'max:255'],
-            'description' => ['nullable', 'string'],
-            'is_public' => ['boolean'],
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
-
-        $shelf->update($validator->validated());
+        $shelf->update($request->validated());
 
         return response()->json($shelf);
     }
@@ -100,20 +77,8 @@ final class ShelfController extends Controller
     /**
      * Add a book to the shelf.
      */
-    public function addBook(Request $request, Shelf $shelf): JsonResponse
+    public function addBook(AddBookRequest $request, Shelf $shelf): JsonResponse
     {
-        if ($shelf->user_id !== Auth::id()) {
-            return response()->json(['message' => 'Unauthorized'], 403);
-        }
-
-        $validator = Validator::make($request->all(), [
-            'book_id' => ['required', 'exists:books,id'],
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
-
         $book = Book::findOrFail($request->book_id);
         
         if (!$shelf->books()->where('book_id', $book->id)->exists()) {
