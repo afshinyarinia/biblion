@@ -48,7 +48,7 @@ final class ShelfController extends Controller
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
-        return response()->json($shelf->load('books'));
+        return response()->json($shelf->loadCount('books'));
     }
 
     /**

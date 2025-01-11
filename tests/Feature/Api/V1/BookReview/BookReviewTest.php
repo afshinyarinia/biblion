@@ -211,7 +211,7 @@ class BookReviewTest extends TestCase
             'user_id' => $this->user->id
         ]);
 
-        $response = $this->getJson('/api/v1/user/reviews');
+        $response = $this->getJson(route('api.v1.user.reviews'));
 
         $response->assertOk()
             ->assertJsonStructure([
@@ -230,9 +230,8 @@ class BookReviewTest extends TestCase
                         ]
                     ]
                 ],
-                'meta',
                 'links'
             ])
             ->assertJsonCount(3, 'data');
     }
-} 
+}

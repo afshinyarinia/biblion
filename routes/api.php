@@ -34,6 +34,7 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
     Route::get('books/search', [BookController::class, 'search'])->name('books.search');
     Route::get('books/{book}', [BookController::class, 'show'])->name('books.show');
     Route::get('shelves/{shelf}', [ShelfController::class, 'show'])->name('shelves.show');
+    Route::get('books/{book}/reviews', [BookReviewController::class, 'index'])->name('books.reviews.index');
 
     // Protected routes
     Route::middleware('auth:sanctum')->group(function () {
@@ -58,7 +59,6 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
         Route::put('reading-progress/books/{book}', [ReadingProgressController::class, 'update'])->name('reading-progress.update');
 
         // Book Reviews
-        Route::get('books/{book}/reviews', [BookReviewController::class, 'index'])->name('books.reviews.index');
         Route::post('books/{book}/reviews', [BookReviewController::class, 'store'])->name('books.reviews.store');
         Route::put('books/{book}/reviews/{review}', [BookReviewController::class, 'update'])->name('books.reviews.update');
         Route::delete('books/{book}/reviews/{review}', [BookReviewController::class, 'destroy'])->name('books.reviews.destroy');

@@ -14,6 +14,7 @@ class BookReview extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
+        'user_id',
         'rating',
         'review',
         'contains_spoilers',

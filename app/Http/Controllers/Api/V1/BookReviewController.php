@@ -29,7 +29,23 @@ final class BookReviewController extends Controller
             ->latest()
             ->paginate(15);
 
-        return response()->json($reviews);
+        return response()->json([
+            'data' => $reviews->items(),
+            'meta' => [
+                'current_page' => $reviews->currentPage(),
+                'from' => $reviews->firstItem(),
+                'last_page' => $reviews->lastPage(),
+                'per_page' => $reviews->perPage(),
+                'to' => $reviews->lastItem(),
+                'total' => $reviews->total(),
+            ],
+            'links' => [
+                'first' => $reviews->url(1),
+                'last' => $reviews->url($reviews->lastPage()),
+                'prev' => $reviews->previousPageUrl(),
+                'next' => $reviews->nextPageUrl(),
+            ]
+        ]);
     }
 
     /**

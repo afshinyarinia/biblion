@@ -21,21 +21,6 @@ final class BookController extends Controller
     {
         $books = $this->getFilteredBooks($request->get('search'));
 
-        return response()->json($books);
-    }
-
-    /**
-     * Search books by title, author, or ISBN.
-     */
-    public function search(Request $request): JsonResponse
-    {
-        $query = $request->get('search');
-        $books = Book::query()
-            ->where('title', 'like', "%{$query}%")
-            ->orWhere('author', 'like', "%{$query}%")
-            ->orWhere('isbn', 'like', "%{$query}%")
-            ->paginate();
-
         return response()->json([
             'data' => $books->items(),
             'meta' => [
@@ -53,6 +38,14 @@ final class BookController extends Controller
                 'next' => $books->nextPageUrl(),
             ]
         ]);
+    }
+
+    /**
+     * Search books by title, author, or ISBN.
+     */
+    public function search(Request $request): JsonResponse
+    {
+        return $this->index($request);
     }
 
     /**
