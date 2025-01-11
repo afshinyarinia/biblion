@@ -15,21 +15,19 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->string('author');
-            $table->string('isbn')->unique()->nullable();
+            $table->string('isbn')->unique();
             $table->text('description')->nullable();
-            $table->integer('publication_year')->nullable();
-            $table->string('publisher')->nullable();
-            $table->string('language')->default('en');
-            $table->integer('page_count')->nullable();
+            $table->integer('total_pages');
             $table->string('cover_image')->nullable();
+            $table->string('publisher')->nullable();
+            $table->date('publication_date')->nullable();
+            $table->string('language')->default('en');
             $table->timestamps();
             $table->softDeletes();
 
             // Indexes for frequently searched columns
-            $table->index('title');
-            $table->index('author');
+            $table->index(['title', 'author']);
             $table->index('isbn');
-            $table->index('publication_year');
         });
     }
 

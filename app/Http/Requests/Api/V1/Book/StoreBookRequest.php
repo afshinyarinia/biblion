@@ -24,13 +24,13 @@ class StoreBookRequest extends FormRequest
         return [
             'title' => ['required', 'string', 'max:255'],
             'author' => ['required', 'string', 'max:255'],
-            'isbn' => ['nullable', 'string', 'max:13', 'unique:books'],
+            'isbn' => ['required', 'string', 'unique:books,isbn'],
             'description' => ['nullable', 'string'],
-            'publication_year' => ['nullable', 'integer', 'min:1000', 'max:' . (date('Y') + 1)],
-            'publisher' => ['nullable', 'string', 'max:255'],
-            'language' => ['nullable', 'string', 'max:2'],
-            'page_count' => ['nullable', 'integer', 'min:1'],
-            'cover_image' => ['nullable', 'string', 'max:255'],
+            'total_pages' => ['required', 'integer', 'min:1'],
+            'cover_image' => ['nullable', 'string', 'url'],
+            'publisher' => ['nullable', 'string'],
+            'publication_date' => ['nullable', 'date'],
+            'language' => ['required', 'string', 'size:2'],
         ];
     }
 }

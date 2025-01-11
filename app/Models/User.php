@@ -52,4 +52,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Shelf::class);
     }
+
+    public function readingProgress()
+    {
+        return $this->hasMany(ReadingProgress::class);
+    }
 }

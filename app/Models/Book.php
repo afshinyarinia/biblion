@@ -19,16 +19,16 @@ final class Book extends Model
         'author',
         'isbn',
         'description',
-        'publication_year',
-        'publisher',
-        'language',
-        'page_count',
+        'total_pages',
         'cover_image',
+        'publisher',
+        'publication_date',
+        'language',
     ];
 
     protected $casts = [
-        'publication_year' => 'integer',
-        'page_count' => 'integer',
+        'total_pages' => 'integer',
+        'publication_date' => 'date',
     ];
 
     /**

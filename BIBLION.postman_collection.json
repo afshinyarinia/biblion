@@ -1,8 +1,8 @@
 {
 	"info": {
-		"_postman_id": "e5f3b0a0-5f1a-4b0e-8f1a-0b0e8f1a0b0e",
-		"name": "BIBLION API",
-		"description": "API collection for the BIBLION book management system",
+		"_postman_id": "1234567-89ab-cdef-0123-456789abcdef",
+		"name": "BIBLION",
+		"description": "API collection for BIBLION - Book Management System",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"variable": [
@@ -17,31 +17,17 @@
 		"bearer": [
 			{
 				"key": "token",
-				"value": "{{access_token}}",
+				"value": "{{auth_token}}",
 				"type": "string"
 			}
 		]
 	},
 	"item": [
 		{
-			"name": "Authentication",
+			"name": "Auth",
 			"item": [
 				{
 					"name": "Register",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"var jsonData = JSON.parse(responseBody);",
-									"if (jsonData.access_token) {",
-									"    pm.environment.set(\"access_token\", jsonData.access_token);",
-									"}"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
 					"request": {
 						"auth": {
 							"type": "noauth"
@@ -61,14 +47,13 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"name\": \"John Doe\",\n    \"email\": \"john@example.com\",\n    \"password\": \"password123\",\n    \"password_confirmation\": \"password123\"\n}"
+							"raw": "{\n    \"name\": \"Test User\",\n    \"email\": \"test@example.com\",\n    \"password\": \"password123\",\n    \"password_confirmation\": \"password123\"\n}"
 						},
 						"url": {
-							"raw": "{{base_url}}/register",
+							"raw": "{{base_url}}/auth/register",
 							"host": ["{{base_url}}"],
-							"path": ["register"]
-						},
-						"description": "Register a new user and receive an authentication token"
+							"path": ["auth", "register"]
+						}
 					}
 				},
 				{
@@ -78,10 +63,8 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"var jsonData = JSON.parse(responseBody);",
-									"if (jsonData.access_token) {",
-									"    pm.environment.set(\"access_token\", jsonData.access_token);",
-									"}"
+									"var jsonData = pm.response.json();",
+									"pm.environment.set(\"auth_token\", jsonData.access_token);"
 								],
 								"type": "text/javascript"
 							}
@@ -106,14 +89,13 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"email\": \"test@example.com\",\n    \"password\": \"password\"\n}"
+							"raw": "{\n    \"email\": \"test@example.com\",\n    \"password\": \"password123\"\n}"
 						},
 						"url": {
-							"raw": "{{base_url}}/login",
+							"raw": "{{base_url}}/auth/login",
 							"host": ["{{base_url}}"],
-							"path": ["login"]
-						},
-						"description": "Login with existing credentials and receive an authentication token"
+							"path": ["auth", "login"]
+						}
 					}
 				},
 				{
@@ -128,11 +110,10 @@
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/logout",
+							"raw": "{{base_url}}/auth/logout",
 							"host": ["{{base_url}}"],
-							"path": ["logout"]
-						},
-						"description": "Logout and invalidate the current access token"
+							"path": ["auth", "logout"]
+						}
 					}
 				},
 				{
@@ -147,15 +128,13 @@
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/user",
+							"raw": "{{base_url}}/auth/user",
 							"host": ["{{base_url}}"],
-							"path": ["user"]
-						},
-						"description": "Get the authenticated user's profile information"
+							"path": ["auth", "user"]
+						}
 					}
 				}
-			],
-			"description": "Authentication related endpoints"
+			]
 		},
 		{
 			"name": "Books",
@@ -163,9 +142,6 @@
 				{
 					"name": "List Books",
 					"request": {
-						"auth": {
-							"type": "noauth"
-						},
 						"method": "GET",
 						"header": [
 							{
@@ -175,31 +151,23 @@
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/books?search=gatsby&page=1",
+							"raw": "{{base_url}}/books",
 							"host": ["{{base_url}}"],
 							"path": ["books"],
 							"query": [
 								{
 									"key": "search",
-									"value": "gatsby",
-									"description": "Search term for title, author, or ISBN"
-								},
-								{
-									"key": "page",
-									"value": "1",
-									"description": "Page number for pagination"
+									"value": "harry potter",
+									"description": "Search by title, author, or ISBN",
+									"disabled": true
 								}
 							]
-						},
-						"description": "Get a paginated list of books with optional search"
+						}
 					}
 				},
 				{
-					"name": "Get Book",
+					"name": "Search Books",
 					"request": {
-						"auth": {
-							"type": "noauth"
-						},
 						"method": "GET",
 						"header": [
 							{
@@ -209,11 +177,17 @@
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/books/1",
+							"raw": "{{base_url}}/books/search?search=gatsby",
 							"host": ["{{base_url}}"],
-							"path": ["books", "1"]
-						},
-						"description": "Get details of a specific book"
+							"path": ["books", "search"],
+							"query": [
+								{
+									"key": "search",
+									"value": "gatsby",
+									"description": "Search term"
+								}
+							]
+						}
 					}
 				},
 				{
@@ -234,14 +208,37 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"title\": \"The Catcher in the Rye\",\n    \"author\": \"J.D. Salinger\",\n    \"isbn\": \"9780316769488\",\n    \"description\": \"The story of Holden Caulfield's experiences in New York City.\",\n    \"publication_year\": 1951,\n    \"publisher\": \"Little, Brown and Company\",\n    \"language\": \"en\",\n    \"page_count\": 234,\n    \"cover_image\": \"https://example.com/covers/catcher.jpg\"\n}"
+							"raw": "{\n    \"title\": \"The Great Gatsby\",\n    \"author\": \"F. Scott Fitzgerald\",\n    \"isbn\": \"9780743273565\",\n    \"description\": \"The Great American Novel\",\n    \"total_pages\": 180,\n    \"cover_image\": \"https://example.com/cover.jpg\",\n    \"publisher\": \"Charles Scribner's Sons\",\n    \"publication_date\": \"1925-04-10\",\n    \"language\": \"en\"\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/books",
 							"host": ["{{base_url}}"],
 							"path": ["books"]
-						},
-						"description": "Create a new book"
+						}
+					}
+				},
+				{
+					"name": "Get Book",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/books/:id",
+							"host": ["{{base_url}}"],
+							"path": ["books", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
 					}
 				},
 				{
@@ -262,14 +259,19 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"title\": \"Updated Book Title\",\n    \"description\": \"Updated book description\"\n}"
+							"raw": "{\n    \"title\": \"Updated Title\",\n    \"author\": \"Updated Author\",\n    \"isbn\": \"9780743273566\"\n}"
 						},
 						"url": {
-							"raw": "{{base_url}}/books/1",
+							"raw": "{{base_url}}/books/:id",
 							"host": ["{{base_url}}"],
-							"path": ["books", "1"]
-						},
-						"description": "Update an existing book"
+							"path": ["books", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
 					}
 				},
 				{
@@ -284,15 +286,19 @@
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/books/1",
+							"raw": "{{base_url}}/books/:id",
 							"host": ["{{base_url}}"],
-							"path": ["books", "1"]
-						},
-						"description": "Delete a book"
+							"path": ["books", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
 					}
 				}
-			],
-			"description": "Book management endpoints"
+			]
 		},
 		{
 			"name": "Shelves",
@@ -312,27 +318,7 @@
 							"raw": "{{base_url}}/shelves",
 							"host": ["{{base_url}}"],
 							"path": ["shelves"]
-						},
-						"description": "Get a list of user's shelves"
-					}
-				},
-				{
-					"name": "Get Shelf",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}/shelves/1",
-							"host": ["{{base_url}}"],
-							"path": ["shelves", "1"]
-						},
-						"description": "Get details of a specific shelf"
+						}
 					}
 				},
 				{
@@ -353,14 +339,37 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"name\": \"Science Fiction\",\n    \"description\": \"My favorite sci-fi books\",\n    \"is_public\": true\n}"
+							"raw": "{\n    \"name\": \"My Reading List\",\n    \"description\": \"Books I want to read\",\n    \"is_public\": true\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/shelves",
 							"host": ["{{base_url}}"],
 							"path": ["shelves"]
-						},
-						"description": "Create a new shelf"
+						}
+					}
+				},
+				{
+					"name": "Get Shelf",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/shelves/:id",
+							"host": ["{{base_url}}"],
+							"path": ["shelves", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
 					}
 				},
 				{
@@ -381,14 +390,19 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"name\": \"Updated Shelf Name\",\n    \"description\": \"Updated shelf description\",\n    \"is_public\": false\n}"
+							"raw": "{\n    \"name\": \"Updated Name\",\n    \"description\": \"Updated Description\",\n    \"is_public\": false\n}"
 						},
 						"url": {
-							"raw": "{{base_url}}/shelves/1",
+							"raw": "{{base_url}}/shelves/:id",
 							"host": ["{{base_url}}"],
-							"path": ["shelves", "1"]
-						},
-						"description": "Update an existing shelf"
+							"path": ["shelves", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
 					}
 				},
 				{
@@ -403,11 +417,16 @@
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/shelves/1",
+							"raw": "{{base_url}}/shelves/:id",
 							"host": ["{{base_url}}"],
-							"path": ["shelves", "1"]
-						},
-						"description": "Delete a shelf"
+							"path": ["shelves", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
 					}
 				},
 				{
@@ -431,11 +450,16 @@
 							"raw": "{\n    \"book_id\": 1\n}"
 						},
 						"url": {
-							"raw": "{{base_url}}/shelves/1/books",
+							"raw": "{{base_url}}/shelves/:id/books",
 							"host": ["{{base_url}}"],
-							"path": ["shelves", "1", "books"]
-						},
-						"description": "Add a book to a shelf"
+							"path": ["shelves", ":id", "books"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
 					}
 				},
 				{
@@ -450,15 +474,129 @@
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/shelves/1/books/1",
+							"raw": "{{base_url}}/shelves/:shelf_id/books/:book_id",
 							"host": ["{{base_url}}"],
-							"path": ["shelves", "1", "books", "1"]
-						},
-						"description": "Remove a book from a shelf"
+							"path": ["shelves", ":shelf_id", "books", ":book_id"],
+							"variable": [
+								{
+									"key": "shelf_id",
+									"value": "1"
+								},
+								{
+									"key": "book_id",
+									"value": "1"
+								}
+							]
+						}
 					}
 				}
-			],
-			"description": "Shelf management endpoints"
+			]
+		},
+		{
+			"name": "Reading Progress",
+			"item": [
+				{
+					"name": "List Reading Progress",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/reading-progress",
+							"host": ["{{base_url}}"],
+							"path": ["reading-progress"],
+							"query": [
+								{
+									"key": "status",
+									"value": "in_progress",
+									"description": "Filter by status (not_started, in_progress, completed)",
+									"disabled": true
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Reading Statistics",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/reading-progress/statistics",
+							"host": ["{{base_url}}"],
+							"path": ["reading-progress", "statistics"]
+						}
+					}
+				},
+				{
+					"name": "Get Book Reading Progress",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/reading-progress/books/:book_id",
+							"host": ["{{base_url}}"],
+							"path": ["reading-progress", "books", ":book_id"],
+							"variable": [
+								{
+									"key": "book_id",
+									"value": "1"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Update Reading Progress",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"status\": \"in_progress\",\n    \"current_page\": 50,\n    \"reading_time_minutes\": 30,\n    \"notes\": \"Really enjoying this book!\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/reading-progress/books/:book_id",
+							"host": ["{{base_url}}"],
+							"path": ["reading-progress", "books", ":book_id"],
+							"variable": [
+								{
+									"key": "book_id",
+									"value": "1"
+								}
+							]
+						}
+					}
+				}
+			]
 		}
 	]
 } 

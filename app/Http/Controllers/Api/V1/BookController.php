@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\Book\StoreBookRequest;
 use App\Http\Requests\Api\V1\Book\UpdateBookRequest;
 use App\Models\Book;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -18,16 +19,40 @@ final class BookController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        $books = Book::query()
-            ->when(
-                $request->filled('search'),
-                fn ($query) => $query->where('title', 'like', "%{$request->search}%")
-                    ->orWhere('author', 'like', "%{$request->search}%")
-                    ->orWhere('isbn', 'like', "%{$request->search}%")
-            )
-            ->paginate(15);
+        $books = $this->getFilteredBooks($request->get('search'));
 
         return response()->json($books);
+    }
+
+    /**
+     * Search books by title, author, or ISBN.
+     */
+    public function search(Request $request): JsonResponse
+    {
+        $query = $request->get('search');
+        $books = Book::query()
+            ->where('title', 'like', "%{$query}%")
+            ->orWhere('author', 'like', "%{$query}%")
+            ->orWhere('isbn', 'like', "%{$query}%")
+            ->paginate();
+
+        return response()->json([
+            'data' => $books->items(),
+            'meta' => [
+                'current_page' => $books->currentPage(),
+                'from' => $books->firstItem(),
+                'last_page' => $books->lastPage(),
+                'per_page' => $books->perPage(),
+                'to' => $books->lastItem(),
+                'total' => $books->total(),
+            ],
+            'links' => [
+                'first' => $books->url(1),
+                'last' => $books->url($books->lastPage()),
+                'prev' => $books->previousPageUrl(),
+                'next' => $books->nextPageUrl(),
+            ]
+        ]);
     }
 
     /**
@@ -66,5 +91,21 @@ final class BookController extends Controller
         $book->delete();
 
         return response()->json(null, 204);
+    }
+
+    /**
+     * Get filtered books query.
+     */
+    private function getFilteredBooks(?string $search): mixed
+    {
+        return Book::query()
+            ->when(
+                $search,
+                fn (Builder $query) => $query
+                    ->where('title', 'like', "%{$search}%")
+                    ->orWhere('author', 'like', "%{$search}%")
+                    ->orWhere('isbn', 'like', "%{$search}%")
+            )
+            ->paginate(15);
     }
 } 

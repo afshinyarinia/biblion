@@ -12,6 +12,7 @@ use App\Models\Book;
 use App\Models\Shelf;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 
 final class ShelfController extends Controller
 {
@@ -41,9 +42,9 @@ final class ShelfController extends Controller
     /**
      * Display the specified shelf.
      */
-    public function show(Shelf $shelf): JsonResponse
+    public function show(Request $request, Shelf $shelf): JsonResponse
     {
-        if (!$shelf->is_public && $shelf->user_id !== Auth::id()) {
+        if (!$shelf->is_public && (!$request->user() || $request->user()->id !== $shelf->user_id)) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 

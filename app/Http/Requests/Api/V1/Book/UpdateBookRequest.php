@@ -25,18 +25,13 @@ class UpdateBookRequest extends FormRequest
         return [
             'title' => ['sometimes', 'required', 'string', 'max:255'],
             'author' => ['sometimes', 'required', 'string', 'max:255'],
-            'isbn' => [
-                'nullable',
-                'string',
-                'max:13',
-                Rule::unique('books')->ignore($this->route('book')),
-            ],
-            'description' => ['nullable', 'string'],
-            'publication_year' => ['nullable', 'integer', 'min:1000', 'max:' . (date('Y') + 1)],
-            'publisher' => ['nullable', 'string', 'max:255'],
-            'language' => ['nullable', 'string', 'max:2'],
-            'page_count' => ['nullable', 'integer', 'min:1'],
-            'cover_image' => ['nullable', 'string', 'max:255'],
+            'isbn' => ['sometimes', 'required', 'string', 'size:13', Rule::unique('books')->ignore($this->route('book'))],
+            'description' => ['sometimes', 'nullable', 'string'],
+            'total_pages' => ['sometimes', 'required', 'integer', 'min:1'],
+            'cover_image' => ['sometimes', 'nullable', 'url'],
+            'publisher' => ['sometimes', 'nullable', 'string', 'max:255'],
+            'publication_date' => ['sometimes', 'nullable', 'date'],
+            'language' => ['sometimes', 'required', 'string', 'size:2'],
         ];
     }
 }
