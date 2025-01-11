@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\BookController;
 use App\Http\Controllers\Api\V1\ReadingProgressController;
 use App\Http\Controllers\Api\V1\ShelfController;
+use App\Http\Controllers\Api\V1\BookReviewController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -55,5 +56,12 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
         Route::get('reading-progress/statistics', [ReadingProgressController::class, 'statistics'])->name('reading-progress.statistics');
         Route::get('reading-progress/books/{book}', [ReadingProgressController::class, 'show'])->name('reading-progress.show');
         Route::put('reading-progress/books/{book}', [ReadingProgressController::class, 'update'])->name('reading-progress.update');
+
+        // Book Reviews
+        Route::get('books/{book}/reviews', [BookReviewController::class, 'index'])->name('books.reviews.index');
+        Route::post('books/{book}/reviews', [BookReviewController::class, 'store'])->name('books.reviews.store');
+        Route::put('books/{book}/reviews/{review}', [BookReviewController::class, 'update'])->name('books.reviews.update');
+        Route::delete('books/{book}/reviews/{review}', [BookReviewController::class, 'destroy'])->name('books.reviews.destroy');
+        Route::get('user/reviews', [BookReviewController::class, 'userReviews'])->name('user.reviews');
     });
 }); 

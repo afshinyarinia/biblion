@@ -597,6 +597,128 @@
 					}
 				}
 			]
+		},
+		{
+			"name": "Book Reviews",
+			"item": [
+				{
+					"name": "List Book Reviews",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/books/:book_id/reviews?spoilers=false",
+							"host": ["{{base_url}}"],
+							"path": ["books", ":book_id", "reviews"],
+							"query": [
+								{
+									"key": "spoilers",
+									"value": "false",
+									"description": "Filter out reviews containing spoilers"
+								}
+							],
+							"variable": [
+								{
+									"key": "book_id",
+									"value": "1"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Create Book Review",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"rating\": 5,\n    \"review\": \"This is an amazing book! I loved every page.\",\n    \"contains_spoilers\": false\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/books/:book_id/reviews",
+							"host": ["{{base_url}}"],
+							"path": ["books", ":book_id", "reviews"],
+							"variable": [
+								{
+									"key": "book_id",
+									"value": "1"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Update Book Review",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"rating\": 4,\n    \"review\": \"After a second read, I still enjoy it but noticed some flaws.\",\n    \"contains_spoilers\": true\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/books/:book_id/reviews/:review_id",
+							"host": ["{{base_url}}"],
+							"path": ["books", ":book_id", "reviews", ":review_id"],
+							"variable": [
+								{
+									"key": "book_id",
+									"value": "1"
+								},
+								{
+									"key": "review_id",
+									"value": "1"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Delete Book Review",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/books/:book_id/reviews/:review_id",
+							"host": ["{{base_url}}"],
+							"path": ["books", ":book_id", "reviews", ":review_id"],
+							"variable": [
+								{
+									"key": "book_id",
+									"value": "1"
+								},
+								{
+									"key": "review_id",
+									"value": "1"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "List User Reviews",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/user/reviews",
+							"host": ["{{base_url}}"],
+							"path": ["user", "reviews"]
+						}
+					}
+				}
+			]
 		}
 	]
 } 

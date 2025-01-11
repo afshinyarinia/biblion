@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 final class Book extends Model
 {
@@ -38,5 +39,20 @@ final class Book extends Model
     {
         return $this->belongsToMany(Shelf::class)
             ->withTimestamps();
+    }
+
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(BookReview::class);
+    }
+
+    public function getAverageRatingAttribute(): ?float
+    {
+        return $this->reviews()->avg('rating');
+    }
+
+    public function getReviewsCountAttribute(): int
+    {
+        return $this->reviews()->count();
     }
 } 
