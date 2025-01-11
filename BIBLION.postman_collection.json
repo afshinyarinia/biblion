@@ -1,0 +1,464 @@
+{
+	"info": {
+		"_postman_id": "e5f3b0a0-5f1a-4b0e-8f1a-0b0e8f1a0b0e",
+		"name": "BIBLION API",
+		"description": "API collection for the BIBLION book management system",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8000/api/v1",
+			"type": "string"
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{access_token}}",
+				"type": "string"
+			}
+		]
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Register",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"if (jsonData.access_token) {",
+									"    pm.environment.set(\"access_token\", jsonData.access_token);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"John Doe\",\n    \"email\": \"john@example.com\",\n    \"password\": \"password123\",\n    \"password_confirmation\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/register",
+							"host": ["{{base_url}}"],
+							"path": ["register"]
+						},
+						"description": "Register a new user and receive an authentication token"
+					}
+				},
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"if (jsonData.access_token) {",
+									"    pm.environment.set(\"access_token\", jsonData.access_token);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"test@example.com\",\n    \"password\": \"password\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/login",
+							"host": ["{{base_url}}"],
+							"path": ["login"]
+						},
+						"description": "Login with existing credentials and receive an authentication token"
+					}
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/logout",
+							"host": ["{{base_url}}"],
+							"path": ["logout"]
+						},
+						"description": "Logout and invalidate the current access token"
+					}
+				},
+				{
+					"name": "Get User Profile",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/user",
+							"host": ["{{base_url}}"],
+							"path": ["user"]
+						},
+						"description": "Get the authenticated user's profile information"
+					}
+				}
+			],
+			"description": "Authentication related endpoints"
+		},
+		{
+			"name": "Books",
+			"item": [
+				{
+					"name": "List Books",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/books?search=gatsby&page=1",
+							"host": ["{{base_url}}"],
+							"path": ["books"],
+							"query": [
+								{
+									"key": "search",
+									"value": "gatsby",
+									"description": "Search term for title, author, or ISBN"
+								},
+								{
+									"key": "page",
+									"value": "1",
+									"description": "Page number for pagination"
+								}
+							]
+						},
+						"description": "Get a paginated list of books with optional search"
+					}
+				},
+				{
+					"name": "Get Book",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/books/1",
+							"host": ["{{base_url}}"],
+							"path": ["books", "1"]
+						},
+						"description": "Get details of a specific book"
+					}
+				},
+				{
+					"name": "Create Book",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"The Catcher in the Rye\",\n    \"author\": \"J.D. Salinger\",\n    \"isbn\": \"9780316769488\",\n    \"description\": \"The story of Holden Caulfield's experiences in New York City.\",\n    \"publication_year\": 1951,\n    \"publisher\": \"Little, Brown and Company\",\n    \"language\": \"en\",\n    \"page_count\": 234,\n    \"cover_image\": \"https://example.com/covers/catcher.jpg\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/books",
+							"host": ["{{base_url}}"],
+							"path": ["books"]
+						},
+						"description": "Create a new book"
+					}
+				},
+				{
+					"name": "Update Book",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Updated Book Title\",\n    \"description\": \"Updated book description\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/books/1",
+							"host": ["{{base_url}}"],
+							"path": ["books", "1"]
+						},
+						"description": "Update an existing book"
+					}
+				},
+				{
+					"name": "Delete Book",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/books/1",
+							"host": ["{{base_url}}"],
+							"path": ["books", "1"]
+						},
+						"description": "Delete a book"
+					}
+				}
+			],
+			"description": "Book management endpoints"
+		},
+		{
+			"name": "Shelves",
+			"item": [
+				{
+					"name": "List Shelves",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/shelves",
+							"host": ["{{base_url}}"],
+							"path": ["shelves"]
+						},
+						"description": "Get a list of user's shelves"
+					}
+				},
+				{
+					"name": "Get Shelf",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/shelves/1",
+							"host": ["{{base_url}}"],
+							"path": ["shelves", "1"]
+						},
+						"description": "Get details of a specific shelf"
+					}
+				},
+				{
+					"name": "Create Shelf",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Science Fiction\",\n    \"description\": \"My favorite sci-fi books\",\n    \"is_public\": true\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/shelves",
+							"host": ["{{base_url}}"],
+							"path": ["shelves"]
+						},
+						"description": "Create a new shelf"
+					}
+				},
+				{
+					"name": "Update Shelf",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Updated Shelf Name\",\n    \"description\": \"Updated shelf description\",\n    \"is_public\": false\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/shelves/1",
+							"host": ["{{base_url}}"],
+							"path": ["shelves", "1"]
+						},
+						"description": "Update an existing shelf"
+					}
+				},
+				{
+					"name": "Delete Shelf",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/shelves/1",
+							"host": ["{{base_url}}"],
+							"path": ["shelves", "1"]
+						},
+						"description": "Delete a shelf"
+					}
+				},
+				{
+					"name": "Add Book to Shelf",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"book_id\": 1\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/shelves/1/books",
+							"host": ["{{base_url}}"],
+							"path": ["shelves", "1", "books"]
+						},
+						"description": "Add a book to a shelf"
+					}
+				},
+				{
+					"name": "Remove Book from Shelf",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/shelves/1/books/1",
+							"host": ["{{base_url}}"],
+							"path": ["shelves", "1", "books", "1"]
+						},
+						"description": "Remove a book from a shelf"
+					}
+				}
+			],
+			"description": "Shelf management endpoints"
+		}
+	]
+} 
