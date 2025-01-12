@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\V1\BookReviewController;
 use App\Http\Controllers\Api\V1\ReadingGoalController;
 use App\Http\Controllers\Api\V1\FollowerController;
 use App\Http\Controllers\Api\V1\ActivityController;
+use App\Http\Controllers\Api\V1\ReadingChallengeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -80,5 +81,18 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
         // Activity Feed
         Route::get('feed', [ActivityController::class, 'index'])->name('feed.index');
         Route::get('activities', [ActivityController::class, 'userActivities'])->name('activities.index');
+
+        // Reading Challenges
+        Route::get('reading-challenges', [ReadingChallengeController::class, 'index'])->name('reading-challenges.index');
+        Route::get('reading-challenges/{readingChallenge}', [ReadingChallengeController::class, 'show'])->name('reading-challenges.show');
+
+        // Reading Challenges (Protected)
+        Route::post('reading-challenges', [ReadingChallengeController::class, 'store'])->name('reading-challenges.store');
+        Route::put('reading-challenges/{readingChallenge}', [ReadingChallengeController::class, 'update'])->name('reading-challenges.update');
+        Route::delete('reading-challenges/{readingChallenge}', [ReadingChallengeController::class, 'destroy'])->name('reading-challenges.destroy');
+        Route::post('reading-challenges/{readingChallenge}/join', [ReadingChallengeController::class, 'join'])->name('reading-challenges.join');
+        Route::post('reading-challenges/{readingChallenge}/books/{book}', [ReadingChallengeController::class, 'addBook'])->name('reading-challenges.books.add');
+        Route::delete('reading-challenges/{readingChallenge}/books/{book}', [ReadingChallengeController::class, 'removeBook'])->name('reading-challenges.books.remove');
+        Route::get('user/reading-challenges', [ReadingChallengeController::class, 'userChallenges'])->name('user.reading-challenges');
     });
 }); 

@@ -44,6 +44,7 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
+        'is_admin' => 'boolean',
     ];
 
     protected $appends = [
@@ -67,6 +68,23 @@ class User extends Authenticatable
     public function readingGoals(): HasMany
     {
         return $this->hasMany(ReadingGoal::class);
+    }
+
+    public function createdChallenges(): HasMany
+    {
+        return $this->hasMany(ReadingChallenge::class, 'created_by');
+    }
+
+    public function participatingChallenges(): BelongsToMany
+    {
+        return $this->belongsToMany(ReadingChallenge::class, 'reading_challenge_participants')
+            ->withPivot(['progress', 'is_completed', 'completed_at'])
+            ->withTimestamps();
+    }
+
+    public function challengeBooks(): HasMany
+    {
+        return $this->hasMany(ReadingChallengeBook::class);
     }
 
     public function activities(): HasMany
@@ -114,5 +132,10 @@ class User extends Authenticatable
     public function isFollowedBy(User $user): bool
     {
         return $this->followers()->where('follower_id', $user->id)->exists();
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->is_admin;
     }
 }

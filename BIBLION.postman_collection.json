@@ -908,6 +908,174 @@
 					}
 				}
 			]
+		},
+		{
+			"name": "Reading Challenges",
+			"item": [
+				{
+					"name": "List Reading Challenges",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{base_url}}/reading-challenges?active_only=true&featured=false",
+							"host": ["{{base_url}}"],
+							"path": ["reading-challenges"],
+							"query": [
+								{
+									"key": "active_only",
+									"value": "true"
+								},
+								{
+									"key": "featured",
+									"value": "false"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Create Reading Challenge",
+					"request": {
+						"method": "POST",
+						"url": {
+							"raw": "{{base_url}}/reading-challenges",
+							"host": ["{{base_url}}"],
+							"path": ["reading-challenges"]
+						},
+						"body": {
+							"mode": "raw",
+							"raw": {
+								"title": "Summer Reading Challenge",
+								"description": "Read 10 books during summer",
+								"start_date": "2024-06-01",
+								"end_date": "2024-08-31",
+								"requirements": {
+									"fiction": 5,
+									"non_fiction": 5
+								},
+								"is_public": true
+							}
+						}
+					}
+				},
+				{
+					"name": "View Reading Challenge",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{base_url}}/reading-challenges/:id",
+							"host": ["{{base_url}}"],
+							"path": ["reading-challenges", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Update Reading Challenge",
+					"request": {
+						"method": "PUT",
+						"url": {
+							"raw": "{{base_url}}/reading-challenges/:id",
+							"host": ["{{base_url}}"],
+							"path": ["reading-challenges", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						},
+						"body": {
+							"mode": "raw",
+							"raw": {
+								"title": "Updated Challenge Title",
+								"description": "Updated challenge description"
+							}
+						}
+					}
+				},
+				{
+					"name": "Join Reading Challenge",
+					"request": {
+						"method": "POST",
+						"url": {
+							"raw": "{{base_url}}/reading-challenges/:id/join",
+							"host": ["{{base_url}}"],
+							"path": ["reading-challenges", ":id", "join"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Add Book to Challenge",
+					"request": {
+						"method": "POST",
+						"url": {
+							"raw": "{{base_url}}/reading-challenges/:challenge_id/books/:book_id",
+							"host": ["{{base_url}}"],
+							"path": ["reading-challenges", ":challenge_id", "books", ":book_id"],
+							"variable": [
+								{
+									"key": "challenge_id",
+									"value": "1"
+								},
+								{
+									"key": "book_id",
+									"value": "1"
+								}
+							]
+						},
+						"body": {
+							"mode": "raw",
+							"raw": {
+								"requirement_key": "fiction"
+							}
+						}
+					}
+				},
+				{
+					"name": "Remove Book from Challenge",
+					"request": {
+						"method": "DELETE",
+						"url": {
+							"raw": "{{base_url}}/reading-challenges/:challenge_id/books/:book_id",
+							"host": ["{{base_url}}"],
+							"path": ["reading-challenges", ":challenge_id", "books", ":book_id"],
+							"variable": [
+								{
+									"key": "challenge_id",
+									"value": "1"
+								},
+								{
+									"key": "book_id",
+									"value": "1"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "List User's Challenges",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{base_url}}/user/reading-challenges",
+							"host": ["{{base_url}}"],
+							"path": ["user", "reading-challenges"]
+						}
+					}
+				}
+			]
 		}
 	]
 } 
