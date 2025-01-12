@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\V1\BookController;
 use App\Http\Controllers\Api\V1\ReadingProgressController;
 use App\Http\Controllers\Api\V1\ShelfController;
 use App\Http\Controllers\Api\V1\BookReviewController;
+use App\Http\Controllers\Api\V1\ReadingGoalController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -63,5 +64,9 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
         Route::put('books/{book}/reviews/{review}', [BookReviewController::class, 'update'])->name('books.reviews.update');
         Route::delete('books/{book}/reviews/{review}', [BookReviewController::class, 'destroy'])->name('books.reviews.destroy');
         Route::get('user/reviews', [BookReviewController::class, 'userReviews'])->name('user.reviews');
+
+        // Reading Goals
+        Route::get('reading-goals/current', [ReadingGoalController::class, 'current'])->name('reading-goals.current');
+        Route::apiResource('reading-goals', ReadingGoalController::class);
     });
 }); 

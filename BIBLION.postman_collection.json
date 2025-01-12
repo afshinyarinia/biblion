@@ -719,6 +719,101 @@
 					}
 				}
 			]
+		},
+		{
+			"name": "Reading Goals",
+			"item": [
+				{
+					"name": "List Reading Goals",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/reading-goals",
+							"host": ["{{base_url}}"],
+							"path": ["reading-goals"]
+						}
+					}
+				},
+				{
+					"name": "Get Current Year Goal",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/reading-goals/current",
+							"host": ["{{base_url}}"],
+							"path": ["reading-goals", "current"]
+						}
+					}
+				},
+				{
+					"name": "Create Reading Goal",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"year\": 2024,\n    \"target_books\": 12,\n    \"target_pages\": 3600\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/reading-goals",
+							"host": ["{{base_url}}"],
+							"path": ["reading-goals"]
+						}
+					}
+				},
+				{
+					"name": "Update Reading Goal",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"target_books\": 24,\n    \"target_pages\": 7200\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/reading-goals/:id",
+							"host": ["{{base_url}}"],
+							"path": ["reading-goals", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Delete Reading Goal",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/reading-goals/:id",
+							"host": ["{{base_url}}"],
+							"path": ["reading-goals", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					}
+				}
+			]
 		}
 	]
 } 
