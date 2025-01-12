@@ -87,4 +87,10 @@ final class Book extends Model
         return;
 
     }
+
+    public function categories(): BelongsToMany
+    {
+        return $this->belongsToMany(Category::class)
+            ->withTimestamps();
+    }
 }

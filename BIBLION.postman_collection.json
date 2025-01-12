@@ -177,14 +177,74 @@
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/books/search?search=gatsby",
+							"raw": "{{base_url}}/books/search?search=gatsby&categories=1,4&from_date=2020-01-01&to_date=2024-12-31&language=en&min_rating=4&max_rating=5&min_pages=100&max_pages=500&publisher=penguin&sort_by=reviews_avg_rating&sort_direction=desc&recommended=true",
 							"host": ["{{base_url}}"],
 							"path": ["books", "search"],
 							"query": [
 								{
 									"key": "search",
 									"value": "gatsby",
-									"description": "Search term"
+									"description": "Search term for title, author, ISBN, or description"
+								},
+								{
+									"key": "categories",
+									"value": "1,4",
+									"description": "Comma-separated category IDs"
+								},
+								{
+									"key": "from_date",
+									"value": "2020-01-01",
+									"description": "Publication date range start"
+								},
+								{
+									"key": "to_date",
+									"value": "2024-12-31",
+									"description": "Publication date range end"
+								},
+								{
+									"key": "language",
+									"value": "en",
+									"description": "Book language code"
+								},
+								{
+									"key": "min_rating",
+									"value": "4",
+									"description": "Minimum average rating"
+								},
+								{
+									"key": "max_rating",
+									"value": "5",
+									"description": "Maximum average rating"
+								},
+								{
+									"key": "min_pages",
+									"value": "100",
+									"description": "Minimum page count"
+								},
+								{
+									"key": "max_pages",
+									"value": "500",
+									"description": "Maximum page count"
+								},
+								{
+									"key": "publisher",
+									"value": "penguin",
+									"description": "Publisher name"
+								},
+								{
+									"key": "sort_by",
+									"value": "reviews_avg_rating",
+									"description": "Sort field (title, author, publication_date, created_at, reviews_count, shelves_count, reviews_avg_rating)"
+								},
+								{
+									"key": "sort_direction",
+									"value": "desc",
+									"description": "Sort direction (asc, desc)"
+								},
+								{
+									"key": "recommended",
+									"value": "true",
+									"description": "Include recommendations based on user's history"
 								}
 							]
 						}
