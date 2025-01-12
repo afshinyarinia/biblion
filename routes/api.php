@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\V1\ReadingProgressController;
 use App\Http\Controllers\Api\V1\ShelfController;
 use App\Http\Controllers\Api\V1\BookReviewController;
 use App\Http\Controllers\Api\V1\ReadingGoalController;
+use App\Http\Controllers\Api\V1\FollowerController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -68,5 +69,11 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
         // Reading Goals
         Route::get('reading-goals/current', [ReadingGoalController::class, 'current'])->name('reading-goals.current');
         Route::apiResource('reading-goals', ReadingGoalController::class);
+
+        // Social Features
+        Route::get('followers', [FollowerController::class, 'index'])->name('followers.index');
+        Route::get('following', [FollowerController::class, 'following'])->name('following.index');
+        Route::post('users/{user}/follow', [FollowerController::class, 'store'])->name('users.follow');
+        Route::delete('users/{user}/unfollow', [FollowerController::class, 'destroy'])->name('users.unfollow');
     });
 }); 

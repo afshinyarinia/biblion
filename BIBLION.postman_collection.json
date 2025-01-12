@@ -814,6 +814,71 @@
 					}
 				}
 			]
+		},
+		{
+			"name": "Followers",
+			"item": [
+				{
+					"name": "List Followers",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/followers",
+							"host": ["{{base_url}}"],
+							"path": ["followers"]
+						}
+					}
+				},
+				{
+					"name": "List Following",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/following",
+							"host": ["{{base_url}}"],
+							"path": ["following"]
+						}
+					}
+				},
+				{
+					"name": "Follow User",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/users/:user_id/follow",
+							"host": ["{{base_url}}"],
+							"path": ["users", ":user_id", "follow"],
+							"variable": [
+								{
+									"key": "user_id",
+									"value": "1"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Unfollow User",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/users/:user_id/unfollow",
+							"host": ["{{base_url}}"],
+							"path": ["users", ":user_id", "unfollow"],
+							"variable": [
+								{
+									"key": "user_id",
+									"value": "1"
+								}
+							]
+						}
+					}
+				}
+			]
 		}
 	]
 } 

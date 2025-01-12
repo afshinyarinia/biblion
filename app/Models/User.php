@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -45,6 +46,11 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
+    protected $appends = [
+        'followers_count',
+        'following_count',
+    ];
+
     /**
      * Get the shelves that belong to the user.
      */
@@ -61,5 +67,37 @@ class User extends Authenticatable
     public function readingGoals(): HasMany
     {
         return $this->hasMany(ReadingGoal::class);
+    }
+
+    public function followers(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'followers', 'following_id', 'follower_id')
+            ->withTimestamps();
+    }
+
+    public function following(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'followers', 'follower_id', 'following_id')
+            ->withTimestamps();
+    }
+
+    public function getFollowersCountAttribute(): int
+    {
+        return $this->followers()->count();
+    }
+
+    public function getFollowingCountAttribute(): int
+    {
+        return $this->following()->count();
+    }
+
+    public function isFollowing(User $user): bool
+    {
+        return $this->following()->where('following_id', $user->id)->exists();
+    }
+
+    public function isFollowedBy(User $user): bool
+    {
+        return $this->followers()->where('follower_id', $user->id)->exists();
     }
 }
