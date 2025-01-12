@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\V1\ShelfController;
 use App\Http\Controllers\Api\V1\BookReviewController;
 use App\Http\Controllers\Api\V1\ReadingGoalController;
 use App\Http\Controllers\Api\V1\FollowerController;
+use App\Http\Controllers\Api\V1\ActivityController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -75,5 +76,9 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
         Route::get('following', [FollowerController::class, 'following'])->name('following.index');
         Route::post('users/{user}/follow', [FollowerController::class, 'store'])->name('users.follow');
         Route::delete('users/{user}/unfollow', [FollowerController::class, 'destroy'])->name('users.unfollow');
+
+        // Activity Feed
+        Route::get('feed', [ActivityController::class, 'index'])->name('feed.index');
+        Route::get('activities', [ActivityController::class, 'userActivities'])->name('activities.index');
     });
 }); 

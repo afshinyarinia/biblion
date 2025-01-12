@@ -879,6 +879,35 @@
 					}
 				}
 			]
+		},
+		{
+			"name": "Activity Feed",
+			"item": [
+				{
+					"name": "Get Activity Feed",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/feed",
+							"host": ["{{base_url}}"],
+							"path": ["feed"]
+						}
+					}
+				},
+				{
+					"name": "Get User Activities",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/activities",
+							"host": ["{{base_url}}"],
+							"path": ["activities"]
+						}
+					}
+				}
+			]
 		}
 	]
 } 

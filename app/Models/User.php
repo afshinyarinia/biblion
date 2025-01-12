@@ -69,6 +69,21 @@ class User extends Authenticatable
         return $this->hasMany(ReadingGoal::class);
     }
 
+    public function activities(): HasMany
+    {
+        return $this->hasMany(Activity::class);
+    }
+
+    public function activityFeed()
+    {
+        $followingIds = $this->following()->pluck('users.id');
+        
+        return Activity::whereIn('user_id', $followingIds)
+            ->with(['user', 'subject'])
+            ->latest()
+            ->paginate();
+    }
+
     public function followers(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'followers', 'following_id', 'follower_id')
