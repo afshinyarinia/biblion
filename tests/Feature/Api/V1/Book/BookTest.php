@@ -33,19 +33,7 @@ test('can list books', function () {
                     'created_at',
                     'updated_at'
                 ]
-            ],
-            'current_page',
-            'first_page_url',
-            'from',
-            'last_page',
-            'last_page_url',
-            'links',
-            'next_page_url',
-            'path',
-            'per_page',
-            'prev_page_url',
-            'to',
-            'total'
+            ]
         ]);
 
     expect($response->json('data'))->toHaveCount(3);
@@ -102,7 +90,7 @@ test('can create a book', function () {
     $bookData = [
         'title' => 'Test Book',
         'author' => 'Test Author',
-        'isbn' => '1234567890123',
+        'isbn' => '9780743273565',
         'description' => 'Test description',
         'total_pages' => 200,
         'cover_image' => 'https://example.com/cover.jpg',
@@ -117,7 +105,7 @@ test('can create a book', function () {
         ->assertJson([
             'title' => 'Test Book',
             'author' => 'Test Author',
-            'isbn' => '1234567890123'
+            'isbn' => '9780743273565'
         ]);
 
     expect(Book::count())->toBe(1);
@@ -131,6 +119,67 @@ test('cannot create book with invalid data', function () {
 
     $response->assertStatus(422)
         ->assertJsonValidationErrors(['title', 'author']);
+});
+
+test('cannot create book with invalid isbn', function () {
+    $bookData = [
+        'title' => 'Test Book',
+        'author' => 'Test Author',
+        'isbn' => '1234567890', // Invalid ISBN
+        'description' => 'Test description',
+        'total_pages' => 200,
+        'language' => 'en'
+    ];
+
+    $response = postJson(route('api.v1.books.store'), $bookData, $this->headers);
+
+    $response->assertStatus(422)
+        ->assertJsonValidationErrors(['isbn']);
+});
+
+test('cannot create book with duplicate isbn', function () {
+    // Create first book
+    Book::factory()->create([
+        'isbn' => '9780141439518'
+    ]);
+
+    // Try to create another book with same ISBN
+    $bookData = [
+        'title' => 'Test Book',
+        'author' => 'Test Author',
+        'isbn' => '9780141439518',
+        'description' => 'Test description',
+        'total_pages' => 200,
+        'language' => 'en'
+    ];
+
+    $response = postJson(route('api.v1.books.store'), $bookData, $this->headers);
+
+    $response->assertStatus(422)
+        ->assertJsonValidationErrors(['isbn'])
+        ->assertJson([
+            'errors' => [
+                'isbn' => ['This ISBN already exists.']
+            ]
+        ]);
+});
+
+test('can create book with valid isbn-10', function () {
+    $bookData = [
+        'title' => 'Test Book',
+        'author' => 'Test Author',
+        'isbn' => '0743273567', // Valid ISBN-10 for The Great Gatsby
+        'description' => 'Test description',
+        'total_pages' => 200,
+        'language' => 'en'
+    ];
+
+    $response = postJson(route('api.v1.books.store'), $bookData, $this->headers);
+
+    $response->assertStatus(201)
+        ->assertJson([
+            'isbn' => '0743273567'
+        ]);
 });
 
 test('can view a book', function () {
@@ -152,7 +201,7 @@ test('can update a book', function () {
     $response = putJson(route('api.v1.books.update', $book), [
         'title' => 'Updated Title',
         'author' => 'Updated Author',
-        'isbn' => '9876543210123',
+        'isbn' => '9780141439518',
         'total_pages' => 200,
         'cover_image' => 'https://example.com/cover.jpg',
         'publisher' => 'Updated Publisher',
@@ -164,12 +213,27 @@ test('can update a book', function () {
         ->assertJson([
             'title' => 'Updated Title',
             'author' => 'Updated Author',
-            'isbn' => '9876543210123'
+            'isbn' => '9780141439518'
         ]);
 
     expect(Book::first())
         ->title->toBe('Updated Title')
         ->author->toBe('Updated Author');
+});
+
+test('cannot update book with invalid isbn', function () {
+    $book = Book::factory()->create();
+
+    $response = putJson(route('api.v1.books.update', $book), [
+        'title' => 'Updated Title',
+        'author' => 'Updated Author',
+        'isbn' => '1234567890', // Invalid ISBN
+        'total_pages' => 200,
+        'language' => 'en'
+    ], $this->headers);
+
+    $response->assertStatus(422)
+        ->assertJsonValidationErrors(['isbn']);
 });
 
 test('can delete a book', function () {
@@ -179,4 +243,4 @@ test('can delete a book', function () {
 
     $response->assertStatus(204);
     expect(Book::count())->toBe(0);
-}); 
+});

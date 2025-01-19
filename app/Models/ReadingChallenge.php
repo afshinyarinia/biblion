@@ -104,7 +104,7 @@ class ReadingChallenge extends Model
         $initialProgress = array_map(fn() => 0, $this->requirements);
         
         $this->participants()->attach($user->id, [
-            'progress' => $initialProgress,
+            'progress' => json_encode($initialProgress),
             'is_completed' => false,
         ]);
     }
@@ -114,7 +114,7 @@ class ReadingChallenge extends Model
         $isCompleted = $this->checkCompletion($progress);
         
         $this->participants()->updateExistingPivot($user->id, [
-            'progress' => $progress,
+            'progress' => json_encode($progress),
             'is_completed' => $isCompleted,
             'completed_at' => $isCompleted ? now() : null,
         ]);

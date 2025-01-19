@@ -11,6 +11,7 @@ use App\Services\Auth\Contracts\AuthServiceInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Validation\UnauthorizedException;
 
 final class AuthController extends Controller
 {
@@ -33,9 +34,14 @@ final class AuthController extends Controller
      */
     public function login(LoginRequest $request): JsonResponse
     {
-        $result = $this->authService->login($request->validated());
-
-        return response()->json($result);
+        try {
+            $result = $this->authService->login($request->validated());
+            return response()->json($result);
+        } catch (UnauthorizedException $e) {
+            return response()->json([
+                'message' => $e->getMessage()
+            ], Response::HTTP_UNAUTHORIZED);
+        }
     }
 
     /**

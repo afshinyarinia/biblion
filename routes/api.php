@@ -40,6 +40,10 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
     Route::get('shelves/{shelf}', [ShelfController::class, 'show'])->name('shelves.show');
     Route::get('books/{book}/reviews', [BookReviewController::class, 'index'])->name('books.reviews.index');
 
+    // Public Reading Challenge routes
+    Route::get('reading-challenges', [ReadingChallengeController::class, 'index'])->name('reading-challenges.index');
+    Route::get('reading-challenges/{readingChallenge}', [ReadingChallengeController::class, 'show'])->name('reading-challenges.show');
+
     // Protected routes
     Route::middleware('auth:sanctum')->group(function () {
         // Auth
@@ -82,17 +86,13 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
         Route::get('feed', [ActivityController::class, 'index'])->name('feed.index');
         Route::get('activities', [ActivityController::class, 'userActivities'])->name('activities.index');
 
-        // Reading Challenges
-        Route::get('reading-challenges', [ReadingChallengeController::class, 'index'])->name('reading-challenges.index');
-        Route::get('reading-challenges/{readingChallenge}', [ReadingChallengeController::class, 'show'])->name('reading-challenges.show');
-
-        // Reading Challenges (Protected)
+        // Protected Reading Challenge routes
         Route::post('reading-challenges', [ReadingChallengeController::class, 'store'])->name('reading-challenges.store');
         Route::put('reading-challenges/{readingChallenge}', [ReadingChallengeController::class, 'update'])->name('reading-challenges.update');
         Route::delete('reading-challenges/{readingChallenge}', [ReadingChallengeController::class, 'destroy'])->name('reading-challenges.destroy');
         Route::post('reading-challenges/{readingChallenge}/join', [ReadingChallengeController::class, 'join'])->name('reading-challenges.join');
         Route::post('reading-challenges/{readingChallenge}/books/{book}', [ReadingChallengeController::class, 'addBook'])->name('reading-challenges.books.add');
         Route::delete('reading-challenges/{readingChallenge}/books/{book}', [ReadingChallengeController::class, 'removeBook'])->name('reading-challenges.books.remove');
-        Route::get('user/reading-challenges', [ReadingChallengeController::class, 'userChallenges'])->name('user.reading-challenges');
+        Route::get('user/reading-challenges', [ReadingChallengeController::class, 'userChallenges'])->name('reading-challenges.user');
     });
-}); 
+});

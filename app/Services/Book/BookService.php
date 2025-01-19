@@ -7,6 +7,7 @@ use App\Repositories\Book\Contracts\BookRepositoryInterface;
 use App\Services\Book\Contracts\BookServiceInterface;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 
 class BookService implements BookServiceInterface
 {
@@ -34,12 +35,16 @@ class BookService implements BookServiceInterface
         // Validate ISBN if provided
         if (isset($data['isbn'])) {
             if (!$this->validateIsbn($data['isbn'])) {
-                throw new \InvalidArgumentException('Invalid ISBN format');
+                throw ValidationException::withMessages([
+                    'isbn' => ['The ISBN format is invalid.']
+                ]);
             }
 
             // Check for duplicate ISBN
             if ($this->bookRepository->findByIsbn($data['isbn'])) {
-                throw new \InvalidArgumentException('ISBN already exists');
+                throw ValidationException::withMessages([
+                    'isbn' => ['This ISBN already exists.']
+                ]);
             }
         }
 
@@ -57,12 +62,16 @@ class BookService implements BookServiceInterface
         // Validate ISBN if being updated
         if (isset($data['isbn']) && $data['isbn'] !== $book->isbn) {
             if (!$this->validateIsbn($data['isbn'])) {
-                throw new \InvalidArgumentException('Invalid ISBN format');
+                throw ValidationException::withMessages([
+                    'isbn' => ['The ISBN format is invalid.']
+                ]);
             }
 
             // Check for duplicate ISBN
             if ($this->bookRepository->findByIsbn($data['isbn'])) {
-                throw new \InvalidArgumentException('ISBN already exists');
+                throw ValidationException::withMessages([
+                    'isbn' => ['This ISBN already exists.']
+                ]);
             }
         }
 

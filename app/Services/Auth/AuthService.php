@@ -6,7 +6,8 @@ use App\Models\User;
 use App\Repositories\Auth\Contracts\AuthRepositoryInterface;
 use App\Services\Auth\Contracts\AuthServiceInterface;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\ValidationException;
+use Illuminate\Http\Response;
+use Illuminate\Validation\UnauthorizedException;
 
 class AuthService implements AuthServiceInterface
 {
@@ -29,9 +30,7 @@ class AuthService implements AuthServiceInterface
     public function login(array $credentials): array
     {
         if (!Auth::attempt($credentials)) {
-            throw ValidationException::withMessages([
-                'email' => ['Invalid login credentials'],
-            ]);
+            throw new UnauthorizedException('Invalid login credentials', Response::HTTP_UNAUTHORIZED);
         }
 
         $user = $this->authRepository->findByEmail($credentials['email']);
