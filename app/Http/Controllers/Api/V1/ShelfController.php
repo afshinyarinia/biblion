@@ -10,21 +10,23 @@ use App\Http\Requests\Api\V1\Shelf\StoreShelfRequest;
 use App\Http\Requests\Api\V1\Shelf\UpdateShelfRequest;
 use App\Models\Book;
 use App\Models\Shelf;
+use App\Services\Shelf\Contracts\ShelfServiceInterface;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 final class ShelfController extends Controller
 {
+    public function __construct(
+        private readonly ShelfServiceInterface $shelfService
+    ) {}
+
     /**
      * Display a listing of the user's shelves.
      */
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
-        $shelves = Auth::user()
-            ->shelves()
-            ->withCount('books')
-            ->paginate(15);
+        $shelves = $this->shelfService->getUserShelves($request->user());
 
         return response()->json($shelves);
     }
@@ -34,9 +36,9 @@ final class ShelfController extends Controller
      */
     public function store(StoreShelfRequest $request): JsonResponse
     {
-        $shelf = Auth::user()->shelves()->create($request->validated());
+        $shelf = $this->shelfService->createShelf($request->user(), $request->validated());
 
-        return response()->json($shelf, 201);
+        return response()->json($shelf, Response::HTTP_CREATED);
     }
 
     /**
@@ -44,8 +46,8 @@ final class ShelfController extends Controller
      */
     public function show(Request $request, Shelf $shelf): JsonResponse
     {
-        if (!$shelf->is_public && (!$request->user() || $request->user()->id !== $shelf->user_id)) {
-            return response()->json(['message' => 'Unauthorized'], 403);
+        if (!$this->shelfService->canAccessShelf($request->user(), $shelf)) {
+            return response()->json(['message' => 'Unauthorized'], Response::HTTP_FORBIDDEN);
         }
 
         return response()->json($shelf->loadCount('books'));
@@ -56,7 +58,7 @@ final class ShelfController extends Controller
      */
     public function update(UpdateShelfRequest $request, Shelf $shelf): JsonResponse
     {
-        $shelf->update($request->validated());
+        $shelf = $this->shelfService->updateShelf($shelf, $request->validated());
 
         return response()->json($shelf);
     }
@@ -66,13 +68,9 @@ final class ShelfController extends Controller
      */
     public function destroy(Shelf $shelf): JsonResponse
     {
-        if ($shelf->user_id !== Auth::id()) {
-            return response()->json(['message' => 'Unauthorized'], 403);
-        }
+        $this->shelfService->deleteShelf($shelf);
 
-        $shelf->delete();
-
-        return response()->json(null, 204);
+        return response()->json(null, Response::HTTP_NO_CONTENT);
     }
 
     /**
@@ -81,13 +79,9 @@ final class ShelfController extends Controller
     public function addBook(AddBookRequest $request, Shelf $shelf): JsonResponse
     {
         $book = Book::findOrFail($request->book_id);
-        
-        if (!$shelf->books()->where('book_id', $book->id)->exists()) {
-            $shelf->books()->attach($book);
-            return response()->json(['message' => 'Book added to shelf']);
-        }
+        $this->shelfService->addBookToShelf($shelf, $book);
 
-        return response()->json(['message' => 'Book already in shelf'], 422);
+        return response()->json(['message' => 'Book added to shelf']);
     }
 
     /**
@@ -95,11 +89,7 @@ final class ShelfController extends Controller
      */
     public function removeBook(Shelf $shelf, Book $book): JsonResponse
     {
-        if ($shelf->user_id !== Auth::id()) {
-            return response()->json(['message' => 'Unauthorized'], 403);
-        }
-
-        $shelf->books()->detach($book);
+        $this->shelfService->removeBookFromShelf($shelf, $book);
 
         return response()->json(['message' => 'Book removed from shelf']);
     }

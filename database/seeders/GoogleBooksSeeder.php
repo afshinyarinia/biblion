@@ -106,9 +106,10 @@ class GoogleBooksSeeder extends Seeder
             
             try {
                 $response = $http->get('https://www.googleapis.com/books/v1/volumes', [
-                    'q' => $query,
-                    'maxResults' => 20,
-                    'key' => env('GOOGLE_BOOKS_API_KEY')
+                    'q' => $query . ' language:en',
+                    'maxResults' => 10,
+                    'key' => env('GOOGLE_BOOKS_API_KEY'),
+                    'langRestrict' => 'en'
                 ]);
 
                 if (!$response->successful()) {
@@ -129,6 +130,11 @@ class GoogleBooksSeeder extends Seeder
                 foreach ($books as $book) {
                     $volumeInfo = $book['volumeInfo'] ?? [];
                     $isbn = $this->getIsbn($volumeInfo['industryIdentifiers'] ?? []);
+
+                    if (($volumeInfo['language'] ?? 'en') !== 'en') {
+                        $this->command->warn("Skipping book '{$volumeInfo['title']}': Not in English");
+                        continue;
+                    }
 
                     if (empty($volumeInfo['title'])) {
                         $this->command->warn("Skipping book: Missing title");
