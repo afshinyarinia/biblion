@@ -1,4 +1,4 @@
-# BIBLION - Book Management API
+# BIBLION - Book Management API (needs some refactors)
 
 BIBLION is a RESTful API for managing books and bookshelves. It allows users to create and manage their book collections, organize books into shelves, and share their reading lists with others.
 
